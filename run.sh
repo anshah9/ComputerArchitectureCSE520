@@ -1,0 +1,2 @@
+#!/bin/sh
+./build/ARM/gem5.opt -d ./dijkstra-Conf1 ./configs/example/se.py --cpu-type=TimingSimpleCPU --caches --l1d_size=2kB --l1d_assoc=1 --cacheline_size=16 -c ./benchmarks/dijkstra/dijkstra_small -o ./benchmarks/dijkstra/input.dat
