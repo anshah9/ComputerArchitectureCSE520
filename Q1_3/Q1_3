@@ -1,14 +1,14 @@
 #!/bin/sh
-./build/ARM/gem5.opt -d ./dijkstra-Conf1 ./configs/example/se.py --cpu-type=TimingSimpleCPU --caches --l1d_size=1kB --l1d_assoc=1 --cacheline_size=16 --l2cache --num-l2caches=1 --l2_size=16kB --l2_assoc=16 --l1i_size=2kB --l1i_assoc=1 -c ./benchmarks/dijkstra/dijkstra_small -o ./benchmarks/dijkstra/input.dat
+./build/ARM/gem5.opt -d ./dijkstra-Conf1 ./configs/example/se.py --cpu-type=TimingSimpleCPU --caches --l1d_size=4kB --l1d_assoc=1 --cacheline_size=16 --l2cache --num-l2caches=1 --l2_size=16kB --l2_assoc=16 --l1i_size=2kB --l1i_assoc=1 -c ./benchmarks/dijkstra/dijkstra_small -o ./benchmarks/dijkstra/input.dat
 
 
 gem5 Simulator System.  http://gem5.org
 gem5 is copyrighted software; use the --copyright option for details.
 
 gem5 compiled Feb  4 2018 18:53:36
-gem5 started Feb 11 2018 12:33:38
-gem5 executing on aditi-Inspiron-5559, pid 10548
-command line: ./build/ARM/gem5.opt -d ./dijkstra-Conf1 ./configs/example/se.py --cpu-type=TimingSimpleCPU --caches --l1d_size=1kB --l1d_assoc=1 --cacheline_size=16 --l2cache --num-l2caches=1 --l2_size=16kB --l2_assoc=16 --l1i_size=2kB --l1i_assoc=1 -c ./benchmarks/dijkstra/dijkstra_small -o ./benchmarks/dijkstra/input.dat
+gem5 started Feb 11 2018 12:40:31
+gem5 executing on aditi-Inspiron-5559, pid 10809
+command line: ./build/ARM/gem5.opt -d ./dijkstra-Conf1 ./configs/example/se.py --cpu-type=TimingSimpleCPU --caches --l1d_size=4kB --l1d_assoc=1 --cacheline_size=16 --l2cache --num-l2caches=1 --l2_size=16kB --l2_assoc=16 --l1i_size=2kB --l1i_assoc=1 -c ./benchmarks/dijkstra/dijkstra_small -o ./benchmarks/dijkstra/input.dat
 
 Global frequency set at 1000000000000 ticks per second
 warn: DRAM device capacity (8192 Mbytes) does not match the address range assigned (512 Mbytes)
@@ -38,4 +38,4 @@ Shortest path is 3 in cost. Path is:  16 41 45 51 68 2 71 47 79 23 77 1 58 33 32
 Shortest path is 0 in cost. Path is:  17 65 73 36 46 10 58 33 13 19 79 23 91 67
 Shortest path is 1 in cost. Path is:  18 15 41 45 51 68
 Shortest path is 2 in cost. Path is:  19 69
-Exiting @ tick 151914886500 because exiting with last active thread context
+Exiting @ tick 129609055500 because exiting with last active thread context
