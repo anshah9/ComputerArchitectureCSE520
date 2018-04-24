@@ -13,36 +13,37 @@ struct argument{
 int n;
 
 void * compute(void * argTemp){
-//	struct timeval begin, end;
+	struct timeval begin1, end1;
+	long long thread;
 	struct argument * Temp = (struct argument *)argTemp;
 	int first1,last1;
 	printf("first = %d\t, last = %d\n",Temp->first, Temp->last);
 	first1=Temp->first;
 	last1=Temp->last;
 //	printf("first = %d\t, last = %d\n",first1, last1);
-//	gettimeofday(&begin, NULL);
+	gettimeofday(&begin1, NULL);
 
 	for(int i = first1; i < last1; i++){
-		//printf("\n 1");
-		for(int j= first1;j <last1; j++){
-			for(int k=first1;k <last1; k++){
+		for(int j= 0;j < n; j++){
+			for(int k=0;k <n; k++){
 				*(Temp->c +  (i*n) + j ) +=  *(Temp->a +  (i*n) + k ) *  *(Temp->b +  (k*n) + j );
-			}
-			//printf("\t %d ",  *(Temp->c + (i*last1) + j ));		
+			}		
 		}	
 		}	
-	
+	gettimeofday(&end1, NULL);
+	thread=end1.tv_usec - begin1.tv_usec;
  	printf("\n");
-//	printf("time by sequential version in micro-sec %lu\n",end.tv_usec - begin.tv_usec);
+	printf("time by thread version in micro-sec %llu\n",thread);
 	return NULL;
 }
 
 int main(int argc , char * argv[]){
 	int t,ret,temp,temp1;
 	int *A,*B,*C,*array;
-	struct timeval begin, end;
+	struct timeval begin, end,begin2,end2;
 	struct argument *arg;
-	long long serial,parallel,speedup;
+	long long serial,parallel;
+	float speedup;
 	n = atoi(argv[1]);
 	t = atoi(argv[2]);
 	
@@ -92,14 +93,14 @@ int main(int argc , char * argv[]){
 
 	temp = (n)/t;
 	temp1 = temp;
-	for(int i=0; i < n; i++){
+/*	for(int i=0; i < n; i++){
 		for(int j=0; j < n; j++){
 		*(C +  (i*n) + j ) = 0;
 		
 		}
-	}  
+	}   */
 
-	gettimeofday(&begin, NULL);
+	gettimeofday(&begin2, NULL);
 	for (int i = 0; i < t; i++)
 	{
 		arg = (struct argument*)malloc(sizeof(struct argument));
@@ -128,11 +129,11 @@ int main(int argc , char * argv[]){
 	for(int i = 0; i< t; i++){
 		ret = pthread_join(p_thread[i],NULL);
 	}
-	gettimeofday(&end, NULL);
-	parallel=end.tv_usec - begin.tv_usec;
+	gettimeofday(&end2, NULL);
+	parallel=end2.tv_usec - begin2.tv_usec;
 	printf("time by parallel version in micro-sec %llu\n",parallel);
-	speedup=serial/parallel;
-	printf("speed up %llu\n",speedup);
+	speedup=(float)serial/parallel;
+	printf("speed up %f\n",speedup);
 //	if(FLAG==0)
 //	{
 //		 printf("Serial execution and parallel execution are equal!");
