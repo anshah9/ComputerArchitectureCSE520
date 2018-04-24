@@ -10,32 +10,39 @@ struct argument{
 	int first,last;
 };
 
-void * compute(void * argTemp){
-	struct timeval begin, end;
-	struct argument * Temp = (struct argument *)argTemp;
-	printf("first = %d\t, last = %d\n",Temp->first, Temp->last);
-	
-	gettimeofday(&begin, NULL);
+int n;
 
-	for(int i = Temp->first; i < Temp->last; i++){
-		for(int j= Temp->first;j <  Temp->last; j++){
-			for(int k= Temp->first;k < Temp->last; k++){
-				Temp-> c[(Temp->last)*i + j] +=  Temp-> a[(Temp->last)*i + k] * Temp-> b[(Temp->last)*k + j];
-			}		
+void * compute(void * argTemp){
+//	struct timeval begin, end;
+	struct argument * Temp = (struct argument *)argTemp;
+	int first1,last1;
+	printf("first = %d\t, last = %d\n",Temp->first, Temp->last);
+	first1=Temp->first;
+	last1=Temp->last;
+//	printf("first = %d\t, last = %d\n",first1, last1);
+//	gettimeofday(&begin, NULL);
+
+	for(int i = first1; i < last1; i++){
+		//printf("\n 1");
+		for(int j= first1;j <last1; j++){
+			for(int k=first1;k <last1; k++){
+				*(Temp->c +  (i*n) + j ) +=  *(Temp->a +  (i*n) + k ) *  *(Temp->b +  (k*n) + j );
+			}
+			//printf("\t %d ",  *(Temp->c + (i*last1) + j ));		
 		}	
-	}
-	gettimeofday(&end, NULL);
- 
-	printf("time by sequential version in micro-sec %lu\n",end.tv_usec - begin.tv_usec);
+		}	
+	
+ 	printf("\n");
+//	printf("time by sequential version in micro-sec %lu\n",end.tv_usec - begin.tv_usec);
 	return NULL;
 }
 
 int main(int argc , char * argv[]){
-	int n,t,ret,temp,temp1;
-	int *A,*B,*C;
+	int t,ret,temp,temp1;
+	int *A,*B,*C,*array;
 	struct timeval begin, end;
 	struct argument *arg;
-
+	long long serial,parallel,speedup;
 	n = atoi(argv[1]);
 	t = atoi(argv[2]);
 	
@@ -49,11 +56,12 @@ int main(int argc , char * argv[]){
 	A=(int*)malloc(sizeof(int)*n*n);
 	B=(int*)malloc(sizeof(int)*n*n);
 	C=(int*)calloc(n*n,sizeof(int));
-
-	for(int i=0; i < n*n; i++){
-
-		A[i]=(rand()%(32767 - 0) + 0);
-		B[i]=(rand()%(32767 - 0) + 0);
+	array = (int *) malloc( n * n * sizeof(int) );
+	for(int i=0; i < n; i++){
+		for(int j=0; j < n; j++){
+		*(A +  (i*n) + j ) = (rand())% 32767;
+		 *(B +  (i*n) + j ) = (rand())% 32767;
+		}
 	}
 
 	gettimeofday(&begin, NULL);
@@ -61,27 +69,37 @@ int main(int argc , char * argv[]){
 	for(int i = 0; i < n; i++){
 		for(int j = 0; j < n; j++){
 			for(int k = 0; k < n; k++){
-				C[n*i + j] += A[n*i + k] * B[n*k + j];
+					*(C +  (i*n) + j ) +=  *(A +  (i*n) + k ) *  *(B +  (k*n) + j );
 			}		
 		}	
 	}
 	gettimeofday(&end, NULL);
- 
-	printf("time by sequential version in micro-sec %lu\n",end.tv_usec - begin.tv_usec);
+	
+	 for (int i = 0; i < n; ++i) {
+      		for (int j = 0; j < n; ++j)
+     		 {
+  	  		*(array +  (i*n) + j ) =  *(C +  (i*n) + j );
+      		}
+    	}
+	
+ 	serial=end.tv_usec - begin.tv_usec;
+	printf("time by sequential version in micro-sec %llu\n",serial);
 	//-----------------------------------------------//
 
 	// printf("Enter the number of threads :\t");
 	// scanf("%d",&t);
 
 
-	temp = (n*n)/t;
+	temp = (n)/t;
 	temp1 = temp;
-	for(int i=0; i < n*n; i++){
+	for(int i=0; i < n; i++){
+		for(int j=0; j < n; j++){
+		*(C +  (i*n) + j ) = 0;
+		
+		}
+	}  
 
-		C[i]=0;
-	}
-
-
+	gettimeofday(&begin, NULL);
 	for (int i = 0; i < t; i++)
 	{
 		arg = (struct argument*)malloc(sizeof(struct argument));
@@ -98,7 +116,7 @@ int main(int argc , char * argv[]){
 		else{
 			
 			arg->first = temp1;
-			arg->last = n*n;
+			arg->last = n;
 		}
 
 		ret = pthread_create(&p_thread[i],NULL,compute, (void *) arg);
@@ -107,9 +125,20 @@ int main(int argc , char * argv[]){
 		}
 	}
 
-	for(int i = 0; i<= t; i++){
+	for(int i = 0; i< t; i++){
 		ret = pthread_join(p_thread[i],NULL);
 	}
+	gettimeofday(&end, NULL);
+	parallel=end.tv_usec - begin.tv_usec;
+	printf("time by parallel version in micro-sec %llu\n",parallel);
+	speedup=serial/parallel;
+	printf("speed up %llu\n",speedup);
+//	if(FLAG==0)
+//	{
+//		 printf("Serial execution and parallel execution are equal!");
+//	}
+
+
 
 	free(A);
 	free(B);
