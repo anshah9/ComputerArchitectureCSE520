@@ -100,7 +100,7 @@ int main(int argc , char * argv[]){
 		}
 	}   */
 
-	gettimeofday(&begin2, NULL);
+	gettimeofday(&begin2, NULL); // Get the time stamp right before you create the threads
 	for (int i = 0; i < t; i++)
 	{
 		arg = (struct argument*)malloc(sizeof(struct argument));
@@ -119,7 +119,10 @@ int main(int argc , char * argv[]){
 			arg->first = temp1;
 			arg->last = n;
 		}
-
+		
+		// We can get it here!!
+	
+		
 		ret = pthread_create(&p_thread[i],NULL,compute, (void *) arg);
 		if(ret != 0){
 			printf("thread create error\n");
@@ -129,7 +132,8 @@ int main(int argc , char * argv[]){
 	for(int i = 0; i< t; i++){
 		ret = pthread_join(p_thread[i],NULL);
 	}
-	gettimeofday(&end2, NULL);
+	
+	gettimeofday(&end2, NULL);  // So we can ge the exact time till the threads are created and joined
 	parallel=end2.tv_usec - begin2.tv_usec;
 	printf("time by parallel version in micro-sec %llu\n",parallel);
 	speedup=(float)serial/parallel;
